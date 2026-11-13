@@ -87,7 +87,6 @@ Windows PowerShell：
 通过 Android Studio 配置 SDK 路径，或在本机创建 `local.properties`。该文件不提交。
 
 - Debug APK：`app/build/outputs/apk/debug/app-debug.apk`
-- Debug 应用包名：`yyzs.lqkj.uk.ocrpreview`，可与正式版并行安装。
 - Release 应用包名：`yyzs.lqkj.uk`
 
 ### 发布签名
@@ -98,7 +97,6 @@ Windows PowerShell：
 .\gradlew.bat :app:assembleRelease
 ```
 
-目前构建脚本在缺少发布签名配置时会退回 Debug 签名；正式分发请使用自己的发布签名。自建 APK 与原作者 APK 的签名不同，通常不能直接覆盖原作者版本。
 
 ### 检查与回归
 
@@ -106,9 +104,6 @@ Windows PowerShell：
 .\gradlew.bat :app:assembleDebug :app:assembleDebugAndroidTest :app:lintDebug
 ```
 
-`app/src/androidTest` 包含真机 OCR、段落归并、擦除与排版、翻译结果 ID 校验及两种输出模式的回归用例。编译测试 APK 不等于已经在设备上执行测试。设备范围、记录、复现命令和未验证事项见 [实验与测试](docs/EXPERIMENTS.md)。
-
-当前 `UpdateChecker` 的仓库配置留空，应用内自动检查更新尚未启用；源码发布不自动生成 APK Release。可在需要发布安装包时配置仓库并完善更新流程。
 
 ## 目录
 
