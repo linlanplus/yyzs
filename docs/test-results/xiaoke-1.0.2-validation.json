@@ -1,0 +1,27 @@
+{
+  "date": "2026-11-13",
+  "appVersion": "1.0.2-ocr-preview",
+  "device": {
+    "manufacturer": "HONOR",
+    "model": "AAK-AN00",
+    "android": "16",
+    "apiLevel": 36
+  },
+  "build": {
+    "assembleDebug": "passed",
+    "assembleDebugAndroidTest": "passed",
+    "assembleRelease": "passed",
+    "lintDebug": "passed",
+    "lintIssueCounts": {
+      "Warning": 27
+    }
+  },
+  "deviceRegression": {
+    "status": "not_run",
+    "reason": "Preview installation rejected by device: INSTALL_FAILED_ABORTED / User rejected permissions",
+    "productionAppUninstalled": false,
+    "productionAppDataCleared": false,
+    "assistantSettingsChangedByThisAttempt": false
+  },
+  "note": "Do not treat earlier 1.0-translation-toggle results as a test of this version."
+}

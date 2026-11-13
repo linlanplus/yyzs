@@ -26,7 +26,7 @@ import yyzs.lqkj.uk.render.TranslationRenderer
 import yyzs.lqkj.uk.translate.RegionTranslationProtocol
 import yyzs.lqkj.uk.ui.ScreenResult
 
-/** Runs on the real Android OCR/render stack, without network calls or user credentials. */
+/** Runs on the Android OCR/render stack without model API calls or user credentials. SDK diagnostics are not disabled here. */
 class TranslationRegression : Instrumentation() {
     private var phase = "after"
     private var fixture = "original"

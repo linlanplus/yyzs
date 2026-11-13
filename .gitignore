@@ -30,3 +30,7 @@ captures/
 .DS_Store
 Thumbs.db
 .vscode/
+
+# Local ADB snapshots, logs and experiment artifacts
+work/
+.local/

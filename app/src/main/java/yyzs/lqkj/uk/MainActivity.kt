@@ -201,7 +201,7 @@ private fun ChatScreen(
             ) {
                 IconButton(onClick = { onDrawer(true) }) { Icon(Icons.Filled.History, contentDescription = "历史对话") }
                 Text(
-                    title ?: "翻译助手",
+                    title ?: "小克",
                     fontSize = 17.sp, fontWeight = FontWeight.Medium, color = Color(0xFF111111),
                     maxLines = 1, overflow = TextOverflow.Ellipsis, textAlign = TextAlign.Center,
                     modifier = Modifier.weight(1f).padding(horizontal = 4.dp),

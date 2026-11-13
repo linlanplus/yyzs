@@ -112,7 +112,7 @@ class AssistantAgent(private val actions: PhoneActions) {
         val apps = actions.appList()
         // Stable parts first so the API's prefix cache keeps working; the clock changes every minute.
         val text = buildString {
-            appendLine("你是手机上的智能助手，名字叫“翻译助手”。")
+            appendLine("你是手机上的智能助手，名字叫“小克”。")
             appendLine("1. 用户只发来一段外语、没有其他指令时，直接给出$target 译文；原文已经是$target 时译成$secondary。只输出译文。")
             appendLine("2. 用户要求翻译时，按要求的语言翻译，只输出译文。")
             appendLine("3. 用户要求操作手机（打开应用、闹钟、计时、手电筒、导航、调音量、打开设置、翻译屏幕等）时调用工具，完成后用一句话说明结果。工具返回失败时如实告诉用户。")

@@ -17,7 +17,7 @@ class TriggerActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (AssistService.instance == null && ScreenAccessibilityService.instance == null) {
-            Toast.makeText(this, "请先开启“翻译助手 屏幕截图”无障碍服务", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "请先开启“小克 屏幕截图”无障碍服务", Toast.LENGTH_LONG).show()
             startActivity(SettingsActivity.intent(this, SettingsActivity.Page.Wake).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
         } else {
             val delay = if (intent?.action == Intent.ACTION_ASSIST) WINDOW_GONE_MS else SHADE_COLLAPSE_MS

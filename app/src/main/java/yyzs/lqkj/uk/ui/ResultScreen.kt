@@ -133,7 +133,7 @@ fun ResultScreen(controller: AssistController, result: ScreenResult, onBack: () 
                 if (!ready()) return@BottomAction
                 scope.launch {
                     val ok = ImageActions.save(context, current())
-                    Toast.makeText(context, if (ok) "已保存到 图片/翻译助手" else "保存失败", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, if (ok) "已保存到 图片/小克" else "保存失败", Toast.LENGTH_SHORT).show()
                 }
             }
             BottomAction(Icons.Filled.Compare, if (result.showOriginal) "切换译文" else "切换原文") {

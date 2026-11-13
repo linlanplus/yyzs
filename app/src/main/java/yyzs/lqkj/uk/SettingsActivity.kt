@@ -32,6 +32,7 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -86,6 +87,7 @@ import yyzs.lqkj.uk.ui.AssistantLogo
 class SettingsActivity : ComponentActivity() {
     enum class Page(val title: String) {
         Wake("唤醒方式"), Translate("翻译"), Voice("语音"), Look("助手形象"), Apps("应用列表"), Api("模型接口"),
+        Privacy("隐私与数据说明"),
     }
 
     private var isAssistant by mutableStateOf(false)
@@ -111,6 +113,7 @@ class SettingsActivity : ComponentActivity() {
                         Page.Look -> Section { LogoPicker() }
                         Page.Apps -> Section { AppListPermission() }
                         Page.Api -> ApiPage()
+                        Page.Privacy -> PrivacyPage()
                     }
                 }
             }
@@ -205,13 +208,50 @@ private fun SettingsList(isAssistant: Boolean, accessibilityOn: Boolean, open: (
             summaryColor = if (Prefs.apiKey.isBlank()) warn else null,
         ) { open(SettingsActivity.Page.Api) }
     }
-    Group { UpdateEntry() }
+    Group {
+        Entry("隐私与数据说明", "数据去向、第三方服务与问题反馈") { open(SettingsActivity.Page.Privacy) }
+        EntryDivider()
+        UpdateEntry()
+    }
 
-    Text(
-        "bug及技术问题反馈：support@lqstudio.uk",
-        fontSize = 12.sp, color = Color(0xFF999999), textAlign = TextAlign.Center,
-        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
-    )
+    SelectionContainer {
+        Text(
+            "问题及 Bug 反馈：support@lqstudio.uk",
+            fontSize = 12.sp, color = Color(0xFF666666), textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+        )
+    }
+}
+
+@Composable
+private fun PrivacyPage() {
+    val context = LocalContext.current
+    var linkError by remember { mutableStateOf(false) }
+    Section("开发者声明") {
+        Text("小克没有开发者自建的用户行为遥测、广告追踪、崩溃回传或“用户体验改进计划”。")
+        Hint("应用不会自动将截图、对话、录音、API Key 或使用记录回传至开发者网站、服务器或自建统计平台，也没有为改进产品或训练模型要求上传这些数据的条款。反馈邮件由你自行选择发送。")
+    }
+    Section("翻译请求发给谁") {
+        Text("快速翻译在本机识别文字，再把文字发送给你配置的模型接口；深度翻译还会发送截图和文字坐标。")
+        Hint("这条翻译链路不调用荣耀 YOYO 的翻译服务。模型服务商或你使用的中转服务仍按各自的数据政策处理请求。")
+    }
+    Section("其他数据流向") {
+        Text("联网搜索会访问搜索服务，部分网页阅读会使用 Jina Reader。语音输入和朗读由所选系统服务处理，可能联网；实时语音会把会话音频发给配置的服务。")
+        Hint("当前 OCR 使用 ML Kit：识别在本机完成，但该 SDK 官方披露会收集设备、应用和性能等诊断数据。因此当前版本不能承诺“所有网络数据仅发给模型”或“绝无第三方统计”。")
+    }
+    Section("本机保存与反馈") {
+        Text("API Key 和聊天记录保存在应用私有目录；截图仅在操作中处理，主动保存或分享时会写入图片或分享缓存。系统自动备份已关闭。")
+        SelectionContainer { Text("问题及 Bug 反馈：support@lqstudio.uk") }
+        Hint("请附版本、机型、复现步骤和脱敏截图，不要发送 API Key、配对码或私密原文。")
+        OutlinedButton(onClick = {
+            linkError = runCatching {
+                context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/linlanplus/yyzs/blob/main/docs/PRIVACY.md")))
+            }.isFailure
+        }) { Text("查看完整隐私说明") }
+        if (linkError) SelectionContainer {
+            Text("未能打开浏览器，请访问 github.com/linlanplus/yyzs 查看 docs/PRIVACY.md。")
+        }
+    }
 }
 
 @Composable
@@ -256,16 +296,16 @@ private fun WakePage(
     Section {
         StatusLine("无障碍截图（推荐）", accessibilityOn)
         Hint(
-            "开启“翻译助手 屏幕截图”无障碍服务后，可以用下拉菜单里的“屏幕翻译”快捷开关或无障碍按钮唤醒。" +
-                "这条路不依赖默认助理，不会被 YOYO 抢走。",
+            "开启“小克 屏幕截图”无障碍服务后，可以用下拉菜单里的“屏幕翻译”快捷开关或无障碍按钮唤醒。" +
+                "这条路不依赖默认数字助理，但服务仍可能受到系统后台限制。",
         )
         Button(onClick = openAccessibilitySettings) { Text(if (accessibilityOn) "无障碍设置" else "开启无障碍服务") }
     }
     Section {
         StatusLine("默认数字助理", isAssistant)
         Hint(
-            "设为默认数字助理后，系统的助理手势（如长按电源键）会打开翻译助手。" +
-                "荣耀手机上 YOYO 会把语音服务改回自己，长按电源键随之失效；荣耀手机请用无障碍截图。",
+            "设为默认数字助理后，可尝试通过系统助理手势（如长按电源键）打开小克。" +
+                "目前仅在荣耀 YOYO 的一台测试设备上验证过替换。部分系统会改回语音服务；实验配置与恢复方法见项目文档。",
         )
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             OutlinedButton(onClick = openAssistantSettings) { Text("设置默认数字助理") }
