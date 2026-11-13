@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<voice-interaction-service xmlns:android="http://schemas.android.com/apk/res/android"
+    android:recognitionService="yyzs.lqkj.uk.assist.ProxyRecognitionService"
+    android:sessionService="yyzs.lqkj.uk.assist.AssistSessionService"
+    android:settingsActivity="yyzs.lqkj.uk.MainActivity"
+    android:supportsAssist="true"
+    android:supportsLaunchVoiceAssistFromKeyguard="false"
+    android:supportsLocalInteraction="false" />

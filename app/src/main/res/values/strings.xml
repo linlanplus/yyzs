@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">翻译助手</string>
+    <string name="tile_label">屏幕翻译</string>
+    <string name="accessibility_label">翻译助手 屏幕截图</string>
+    <string name="accessibility_description">只用于在你点击“屏幕翻译”开关或无障碍按钮时截取当前屏幕，截图在本机识别文字。不读取界面内容，不记录操作。</string>
+</resources>
