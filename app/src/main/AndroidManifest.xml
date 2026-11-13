@@ -63,7 +63,7 @@
             android:excludeFromRecents="true"
             android:exported="false"
             android:launchMode="singleTask"
-            android:taskAffinity="yyzs.lqkj.uk.assist"
+            android:taskAffinity="${applicationId}.assist"
             android:theme="@style/Theme.Yyzs.Transparent"
             android:windowSoftInputMode="adjustResize" />
 

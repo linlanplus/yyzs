@@ -119,6 +119,7 @@ private fun SettingsScreen(
     var speechService by remember { mutableStateOf(Prefs.speechService) }
     var autoTranslate by remember { mutableStateOf(Prefs.autoTranslateOnWake) }
     var deepDefault by remember { mutableStateOf(Prefs.deepByDefault) }
+    var streamTranslation by remember { mutableStateOf(Prefs.streamScreenTranslation) }
     var testResult by remember { mutableStateOf<String?>(null) }
     var openaiKey by remember { mutableStateOf(Prefs.openaiKey) }
     var liveUrl by remember { mutableStateOf(Prefs.liveUrl) }
@@ -233,6 +234,11 @@ private fun SettingsScreen(
             }
 
             Section("翻译") {
+                SwitchRow("流式输出", streamTranslation) { streamTranslation = it; Prefs.streamScreenTranslation = it }
+                Text(
+                    "开启时逐段显示屏幕译文；关闭时，等全部翻译完成后一次显示。更改将在下一次翻译生效。",
+                    fontSize = 13.sp, color = Color(0xFF666666),
+                )
                 Picker("译成", Languages.targets.map { it.code to it.label }, target) { target = it; Prefs.targetLang = it }
                 Picker("原文已是目标语言时译成", Languages.targets.map { it.code to it.label }, secondary) {
                     secondary = it; Prefs.secondaryLang = it

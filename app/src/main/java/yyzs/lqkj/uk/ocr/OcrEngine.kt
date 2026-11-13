@@ -63,20 +63,22 @@ object OcrEngine {
         val regions = ArrayList<TextRegion>()
         for (block in text.textBlocks) {
             val lines = block.lines.mapNotNull { line ->
-                val box = line.boundingBox ?: return@mapNotNull null
+                val box = line.boundingBox?.let(::Rect) ?: return@mapNotNull null
+                // Some model line boxes cut off the first letter even when an element includes it.
+                line.elements.mapNotNull { it.boundingBox }.forEach { box.union(it) }
                 val content = line.text.trim()
                 if (content.isEmpty() || box.bottom <= skipTop || box.width() <= 0 || box.height() <= 0) null
                 else OcrLine(content, box, line.confidence)
             }
             for (group in splitBlock(lines)) {
-                val joined = joinLines(group.map { it.text })
+                val joined = ParagraphAssembler.joinLines(group.map { it.text })
                 // Times, counters and icons-as-text have nothing to translate.
                 if (joined.none { it.isLetter() }) continue
                 val box = Rect(group[0].box).apply { group.forEach { union(it.box) } }
                 regions += TextRegion(regions.size, box, group, joined)
             }
         }
-        return regions
+        return ParagraphAssembler.assemble(regions)
     }
 
     /** ML Kit sometimes merges a heading with its body, or two columns; split where size or spacing jumps. */
@@ -91,29 +93,16 @@ object OcrEngine {
             val sizeJump = large > small * 1.45f
             val bigGap = cur.top - prev.bottom > large * 0.9f
             val sameRow = cur.top < prev.bottom - large * 0.5f
-            if (sizeJump || bigGap || sameRow) groups += mutableListOf(lines[i]) else groups.last() += lines[i]
+            val newItem = ParagraphAssembler.startsListItem(lines[i].text)
+            if (sizeJump || bigGap || sameRow || newItem) groups += mutableListOf(lines[i]) else groups.last() += lines[i]
         }
         return groups
     }
 
-    private fun joinLines(texts: List<String>): String {
-        val sb = StringBuilder()
-        for (t in texts) {
-            if (sb.isNotEmpty() && !isCjk(sb.last()) && !isCjk(t.first())) sb.append(' ')
-            sb.append(t)
-        }
-        return sb.toString()
-    }
-
-    private fun isCjk(c: Char): Boolean = when (Character.UnicodeScript.of(c.code)) {
-        Character.UnicodeScript.HAN, Character.UnicodeScript.HIRAGANA, Character.UnicodeScript.KATAKANA -> true
-        // CJK punctuation and full-width forms.
-        else -> c in '\u3000'..'\u303F' || c in '\uFF00'..'\uFFEF'
-    }
 }
 
 private suspend fun <T> Task<T>.await(): T = suspendCancellableCoroutine { cont ->
-    addOnSuccessListener { cont.resume(it) }
-    addOnFailureListener { cont.resumeWithException(it) }
+    addOnSuccessListener { if (cont.isActive) cont.resume(it) }
+    addOnFailureListener { if (cont.isActive) cont.resumeWithException(it) }
     addOnCanceledListener { cont.cancel() }
 }

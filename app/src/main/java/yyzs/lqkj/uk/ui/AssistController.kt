@@ -17,6 +17,7 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -48,9 +49,39 @@ class ScreenResult(val original: Bitmap, val deep: Boolean) {
     var regions: List<TextRegion> = emptyList()
     val translations = sortedMapOf<Int, String>()
 
-    fun translatedText(): String = translations.entries
-        .mapNotNull { (id, t) -> t.ifBlank { regions.getOrNull(id)?.text } }
+    fun translatedText(): String = regions
+        .map { region -> translations[region.id]?.ifBlank { region.text } ?: region.text }
         .joinToString("\n")
+
+    /** Buffer both the text and drawing in one-shot mode. Failure/cancellation never publishes a partial result. */
+    internal suspend fun renderTranslations(streaming: Boolean, incoming: Flow<Pair<Int, String>>): TranslationRenderer {
+        val target = TranslationRenderer(original, regions)
+        val byId = regions.associateBy { it.id }
+        val received = sortedMapOf<Int, String>()
+        val pending = mutableListOf<TranslationRenderer.Prepared>()
+        if (streaming) renderer = target
+        status = (if (deep) "深度翻译中 " else "翻译中 ") + "0/${regions.size}"
+        incoming.collect { (id, translation) ->
+            val region = byId[id] ?: return@collect
+            val prepared = withContext(Dispatchers.Default) { target.prepare(region, translation) }
+            received[id] = translation
+            if (streaming) {
+                target.apply(prepared)
+                translations[id] = translation
+                version++
+            } else {
+                pending += prepared
+            }
+            status = (if (deep) "深度翻译中 " else "翻译中 ") + "${received.size}/${regions.size}"
+        }
+        if (!streaming && received.isNotEmpty()) {
+            target.applyBatch(pending)
+            translations.putAll(received)
+            renderer = target
+            version++
+        }
+        return target
+    }
 }
 
 /** Everything [AssistActivity] shows; lives as long as the activity. */
@@ -230,6 +261,7 @@ class AssistController(
         }
         screenJob?.cancel()
         val result = ScreenResult(bitmap, deep)
+        val streaming = Prefs.streamScreenTranslation
         screen = result
         showingScreen = true
         screenJob = scope.launch {
@@ -240,17 +272,10 @@ class AssistController(
                     result.error = "屏幕上没有识别到文字"
                     return@launch
                 }
-                val renderer = TranslationRenderer(bitmap)
-                result.renderer = renderer
-                result.status = if (deep) "深度翻译中…" else "翻译中 0/${regions.size}"
-                Translator.translateRegions(regions, target, if (deep) bitmap else null).collect { (id, translation) ->
-                    val region = regions.getOrNull(id) ?: return@collect
-                    result.translations[id] = translation
-                    renderer.paint(region, translation)
-                    result.version++
-                    result.status = (if (deep) "深度翻译中 " else "翻译中 ") + "${result.translations.size}/${regions.size}"
-                }
+                val renderer = result.renderTranslations(streaming,
+                    Translator.translateRegions(regions, target, if (deep) bitmap else null))
                 if (result.translations.isEmpty()) result.error = "模型没有返回译文，请重试"
+                else if (renderer.truncatedIds.isNotEmpty()) result.error = "部分译文较长，画面中已省略；复制译文可查看全文。"
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {

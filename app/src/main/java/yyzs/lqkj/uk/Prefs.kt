@@ -64,6 +64,11 @@ object Prefs {
         get() = sp.getBoolean("deep_default", false)
         set(value) = sp.edit { putBoolean("deep_default", value) }
 
+    /** Show each screen-translation region as it arrives; existing installs keep this behavior. */
+    var streamScreenTranslation: Boolean
+        get() = sp.getBoolean("stream_screen_translation", true)
+        set(value) = sp.edit { putBoolean("stream_screen_translation", value) }
+
     /** OpenAI key for GPT-Live voice conversations. Stored on the phone: this is a personal build without a server. */
     var openaiKey: String
         get() = sp.getString("openai_key", null).orEmpty()
