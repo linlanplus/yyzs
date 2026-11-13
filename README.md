@@ -2,7 +2,7 @@
 
 一款以屏幕翻译为起点的 Android 语音助手：替换已测试手机上的原厂助手入口，手机本地 OCR，将文字交给自己选择的模型，再把译文绘制回截图中的对应位置。
 
-当前源码版本：**1.0.2**。采用 Kotlin、Jetpack Compose 和 ML Kit。
+当前源码版本：**1.0.1**。采用 Kotlin、Jetpack Compose 和 ML Kit。
 
 **目前仅测试过荣耀 YOYO 的替换。** 
 

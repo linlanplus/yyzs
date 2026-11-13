@@ -21,8 +21,8 @@ android {
         applicationId = "yyzs.lqkj.uk"
         minSdk = 29
         targetSdk = 35
-        versionCode = 3
-        versionName = "1.0.2"
+        versionCode = 2
+        versionName = "1.0.1"
         testInstrumentationRunner = "yyzs.lqkj.uk.TranslationRegression"
         // ML Kit ships native OCR libraries; both target phones are arm64.
         ndk { abiFilters += "arm64-v8a" }
