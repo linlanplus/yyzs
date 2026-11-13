@@ -24,7 +24,7 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.lifecycleScope
-import yyzs.lqkj.uk.MainActivity
+import yyzs.lqkj.uk.SettingsActivity
 import yyzs.lqkj.uk.Prefs
 import yyzs.lqkj.uk.agent.AssistantAgent
 import yyzs.lqkj.uk.agent.InstalledApps
@@ -186,7 +186,8 @@ class AssistActivity : ComponentActivity() {
     }
 
     private fun openSettings() {
-        startActivity(Intent(this, MainActivity::class.java))
+        // A task of its own, so settings is not stacked into this excluded-from-recents panel.
+        startActivity(SettingsActivity.intent(this).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
         finish()
     }
 

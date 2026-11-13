@@ -64,7 +64,7 @@ object DeepSeekClient {
         allowTools: Boolean = true,
     ): Flow<ChatEvent> = flow {
         val key = Prefs.apiKey
-        if (key.isBlank()) throw ApiException("请先在设置里填写 DeepSeek API Key")
+        if (key.isBlank()) throw ApiException("请先在设置里填写对话模型的 API Key")
 
         val body = JSONObject()
             .put("model", Prefs.model)
@@ -139,7 +139,7 @@ object DeepSeekClient {
             402 -> "账户余额不足"
             422 -> "请求参数错误"
             429 -> "请求太频繁，请稍后再试"
-            in 500..599 -> "DeepSeek 服务繁忙"
+            in 500..599 -> "模型服务繁忙"
             else -> "请求失败"
         }
         return if (detail.isNullOrBlank()) "$hint（$code）" else "$hint（$code）：$detail"

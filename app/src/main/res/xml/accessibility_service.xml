@@ -8,4 +8,4 @@
     android:canTakeScreenshot="true"
     android:description="@string/accessibility_description"
     android:notificationTimeout="0"
-    android:settingsActivity="yyzs.lqkj.uk.MainActivity" />
+    android:settingsActivity="yyzs.lqkj.uk.SettingsActivity" />

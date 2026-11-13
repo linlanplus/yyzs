@@ -6,7 +6,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.widget.Toast
-import yyzs.lqkj.uk.MainActivity
+import yyzs.lqkj.uk.SettingsActivity
 
 /**
  * Started by the quick-settings tile (starting an activity collapses the notification shade) or by
@@ -18,7 +18,7 @@ class TriggerActivity : Activity() {
         super.onCreate(savedInstanceState)
         if (AssistService.instance == null && ScreenAccessibilityService.instance == null) {
             Toast.makeText(this, "请先开启“翻译助手 屏幕截图”无障碍服务", Toast.LENGTH_LONG).show()
-            startActivity(Intent(this, MainActivity::class.java))
+            startActivity(SettingsActivity.intent(this, SettingsActivity.Page.Wake).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
         } else {
             val delay = if (intent?.action == Intent.ACTION_ASSIST) WINDOW_GONE_MS else SHADE_COLLAPSE_MS
             Handler(Looper.getMainLooper()).postDelayed(::capture, delay)

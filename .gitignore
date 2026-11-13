@@ -7,3 +7,26 @@ app/build/
 .kotlin/
 .idea/
 *.iml
+
+# Credentials and local release artifacts
+.env
+.env.*
+!.env.example
+*.jks
+*.keystore
+*.p12
+*.pfx
+*.pem
+*.key
+*.apk
+*.aab
+*.apks
+*.log
+captures/
+.externalNativeBuild/
+.cxx/
+
+# Editor and OS state
+.DS_Store
+Thumbs.db
+.vscode/

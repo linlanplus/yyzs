@@ -43,19 +43,20 @@
 
         <activity
             android:name=".MainActivity"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden|uiMode|density"
             android:exported="true"
-            android:launchMode="singleTask">
+            android:launchMode="singleTask"
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
+        <!-- Exported because system Settings opens it from the accessibility, voice input and assistant pages. -->
         <activity
-            android:name=".ui.ChatActivity"
-            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden|uiMode|density"
-            android:exported="false"
-            android:windowSoftInputMode="adjustResize" />
+            android:name=".SettingsActivity"
+            android:exported="true" />
 
         <activity
             android:name=".ui.AssistActivity"

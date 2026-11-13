@@ -76,7 +76,7 @@ class LiveSession(
 
     fun start() {
         val key = Prefs.openaiKey
-        if (key.isBlank()) return fail("请先在设置里填写 OpenAI API Key")
+        if (key.isBlank()) return fail("请先在设置里填写实时语音模型的 API Key")
         val request = Request.Builder()
             .url(Prefs.liveUrl)
             .header("Authorization", "Bearer $key")
@@ -139,8 +139,8 @@ class LiveSession(
         override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
             if (closing) return
             val reason = when (response?.code) {
-                401 -> "OpenAI API Key 无效"
-                403 -> "没有 GPT-Live 的使用权限（免费账户不支持）"
+                401 -> "实时语音模型的 API Key 无效"
+                403 -> "没有该实时语音模型的使用权限（部分服务商的免费账户不支持）"
                 404 -> "接口地址或模型不存在"
                 429 -> "并发会话数或额度已用完"
                 null -> "网络连接失败：${t.message}"
